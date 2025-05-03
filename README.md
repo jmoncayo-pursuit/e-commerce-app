@@ -138,14 +138,3 @@ collectiverse/
 - Search and filtering capabilities
 - Fast and secure hosting via Firebase Hosting
 
-## Development Guidelines
-
-- Follow conventional commit messages
-- Create one pull request per week
-- Test API endpoints using Thunder Client in VS Code
-- Keep code well-documented and maintainable
-- Use preview deployments for testing changes before production
-
-## License
-
-MIT
