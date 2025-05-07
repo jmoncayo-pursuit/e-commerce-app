@@ -21,18 +21,27 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
-    // Demo authentication - in production, this would call your backend
-    if (formData.email === 'demo@collectiverse.com' && formData.password === 'demo123') {
-      // Store demo token in localStorage
-      localStorage.setItem('authToken', 'demo-token-123');
-      localStorage.setItem('user', JSON.stringify({
-        id: 1,
-        email: 'demo@collectiverse.com',
-        name: 'Demo User'
-      }));
-      navigate('/');
-    } else {
-      setError('Invalid credentials. Use demo@collectiverse.com / demo123');
+    try {
+      // In production, this would be a real API call
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        navigate('/');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || 'Invalid credentials');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
     }
   };
 
@@ -77,11 +86,13 @@ const Login = () => {
             Login
           </button>
 
-          <div className="demo-credentials">
-            <p>Demo Credentials:</p>
-            <p>Email: demo@collectiverse.com</p>
-            <p>Password: demo123</p>
-          </div>
+          {process.env.NODE_ENV === 'development' && (
+            <div className="demo-credentials">
+              <p>Demo Credentials:</p>
+              <p>Email: {process.env.VITE_DEMO_EMAIL}</p>
+              <p>Password: {process.env.VITE_DEMO_PASSWORD}</p>
+            </div>
+          )}
         </form>
       </div>
     </div>
