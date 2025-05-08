@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/api';
+import { useAuthStore } from '../../stores/authStore';
 import './Login.css';
 
 const Login = () => {
@@ -8,6 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const login = useAuthStore(state => state.login);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,14 +19,8 @@ const Login = () => {
       const response = await authService.login({ email, password });
       const { token, username } = response.data;
       
-      // Store the token and user info
-      localStorage.setItem('auth-storage', JSON.stringify({
-        state: {
-          token,
-          username,
-          email
-        }
-      }));
+      // Update auth store
+      login({ username, email }, token);
       
       // Redirect to home page
       navigate('/');
