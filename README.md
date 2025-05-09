@@ -6,7 +6,7 @@ A curated online storefront for enthusiasts of comic books, action figures, retr
 
 - Frontend: React (Vite)
 - Backend: Java Spring Boot
-- Database: MySQL
+- Database: PostgreSQL
 - Authentication: JWT-based authentication
 - Styling: Custom CSS
 
@@ -15,7 +15,7 @@ A curated online storefront for enthusiasts of comic books, action figures, retr
 - Node.js (v18+)
 - Java JDK 17
 - Maven
-- MySQL
+- PostgreSQL
 
 ## Project Structure
 
@@ -86,7 +86,7 @@ collectiverse/
    cd backend
    ```
 
-2. Create a MySQL database named 'collectiverse'
+2. Create a PostgreSQL database named 'collectiverse'
 
 3. Update `src/main/resources/application.properties` with your database credentials
 
