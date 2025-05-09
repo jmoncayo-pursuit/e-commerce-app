@@ -1,35 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { productService } from '../../services/api';
+import useProductStore from '../../stores/productStore';
+import ImageWithFallback from '../../components/common/ImageWithFallback';
 import './ProductList.css';
 
 const ProductList = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { products, loading, error, fetchProducts, filterProducts, sortProducts, filters, setFilters } = useProductStore();
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        console.log('Fetching products from API...');
-        const response = await productService.getAll();
-        console.log('Products fetched successfully:', response.data);
-        setProducts(response.data);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError(err.response?.data?.message || err.message || 'Failed to fetch products. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({ ...filters, [name]: value });
+  };
+
+  const handlePriceRangeChange = (e) => {
+    const { name, value } = e.target;
+    const numValue = Math.max(0, parseInt(value) || 0);
+    setFilters({
+      ...filters,
+      priceRange: { ...filters.priceRange, [name]: numValue }
+    });
+  };
+
+  const filteredProducts = sortProducts(filterProducts());
 
   if (loading) {
     return (
       <div className="product-list-container">
-        <p>Loading products...</p>
+        <div className="loading">Loading collectibles...</div>
       </div>
     );
   }
@@ -37,42 +39,115 @@ const ProductList = () => {
   if (error) {
     return (
       <div className="product-list-container">
-        <p>Error: {error}</p>
-        <button 
-          className="retry-button" 
-          onClick={() => window.location.reload()}
-        >
-          Retry
-        </button>
+        <div className="error">Error: {error}</div>
       </div>
     );
   }
 
   return (
     <div className="product-list-container">
-      <h2 className="product-list-title">Our Products</h2>
-      <div className="product-grid">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <div key={product.id} className="product-card">
-              <img
-                src={product.imageUrl || product.image}
+      <button 
+        className="filter-toggle-button"
+        onClick={() => setShowFilters(!showFilters)}
+      >
+        {showFilters ? 'Hide Filters' : 'Show Filters'}
+      </button>
+
+      {showFilters && (
+        <div className="filters-section">
+          <div className="filter-controls">
+            <select
+              name="category"
+              value={filters.category}
+              onChange={handleFilterChange}
+              className="filter-select"
+            >
+              <option value="">All Categories</option>
+              <option value="comics">Comics</option>
+              <option value="action-figures">Action Figures</option>
+              <option value="retro-games">Retro Games</option>
+              <option value="trading-cards">Trading Cards</option>
+            </select>
+
+            <select
+              name="condition"
+              value={filters.condition}
+              onChange={handleFilterChange}
+              className="filter-select"
+            >
+              <option value="">All Conditions</option>
+              <option value="mint">Mint</option>
+              <option value="near-mint">Near Mint</option>
+              <option value="excellent">Excellent</option>
+              <option value="very-good">Very Good</option>
+              <option value="good">Good</option>
+            </select>
+
+            <div className="price-range">
+              <input
+                type="number"
+                name="min"
+                placeholder="Min Price"
+                value={filters.priceRange.min}
+                onChange={handlePriceRangeChange}
+                className="price-input"
+                min="0"
+              />
+              <span>to</span>
+              <input
+                type="number"
+                name="max"
+                placeholder="Max Price"
+                value={filters.priceRange.max}
+                onChange={handlePriceRangeChange}
+                className="price-input"
+                min="0"
+              />
+            </div>
+
+            <select
+              name="sortBy"
+              value={filters.sortBy}
+              onChange={handleFilterChange}
+              className="filter-select"
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+      )}
+
+      <div className="products-grid">
+        {filteredProducts.map((product) => (
+          <Link to={`/products/${product.id}`} key={product.id} className="product-card">
+            <div className="product-image-container">
+              <ImageWithFallback
+                src={product.images[0]?.imageUrl}
                 alt={product.name}
                 className="product-image"
               />
+              <div className="product-condition">{product.condition}</div>
+            </div>
               <div className="product-info">
-                <p className="product-category">{product.category}</p>
                 <h3 className="product-name">{product.name}</h3>
-                <p className="product-price">${product.price.toFixed(2)}</p>
-                <Link to={`/products/${product.id}`} className="add-to-cart-button">
-                  View Details
-                </Link>
+              <p className="product-description">{product.description}</p>
+              <div className="product-meta">
+                <span className="product-price">${product.price.toFixed(2)}</span>
+                <span className="product-year">{product.year}</span>
+              </div>
+              <div className="seller-info">
+                <span className="seller-name">{product.seller.name}</span>
+                <span className="seller-rating">★ {product.seller.rating}</span>
+              </div>
+              <div className="product-location">
+                <span>📍 {product.location}</span>
               </div>
             </div>
-          ))
-        ) : (
-          <p>No products found.</p>
-        )}
+          </Link>
+        ))}
       </div>
     </div>
   );
