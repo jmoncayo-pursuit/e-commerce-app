@@ -53,20 +53,7 @@ nav a:hover {
 }
 
 /* Footer styles */
-.footer {
-  background-color: var(--secondary-color);
-  color: white;
-  padding: 2rem 0;
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  transition: all 0.3s ease;
-  min-height: 60px;
-  margin-top: auto;
-  z-index: 100;
-}
+/* Removed sticky/persistent .footer block */
 
 .footer-collapsed {
   padding: 0.5rem 0;
