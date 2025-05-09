@@ -1,0 +1,48 @@
+.image-container {
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* Creates a square aspect ratio */
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image.loading {
+  opacity: 0;
+}
+
+.image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+}
+
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: #888;
+}
+
+.placeholder-icon {
+  font-size: 2rem;
+}
+
+.placeholder-text {
+  font-size: 0.9rem;
+  text-align: center;
+} 
