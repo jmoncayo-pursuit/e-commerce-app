@@ -1,155 +1,187 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
-import './Register.css';
+import './Auth.css';
 
 const Register = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { register, error, isLoading, clearError } = useAuthStore();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+  const countdownRef = useRef(null);
+
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     password: '',
-    confirmPassword: '',
+    confirmPassword: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const login = useAuthStore((state) => state.login);
+
+  const [validationError, setValidationError] = useState('');
+
+  // Handle redirect after successful registration
+  useEffect(() => {
+    if (isSuccess) {
+      countdownRef.current = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(countdownRef.current);
+            const from = location.state?.from?.pathname || '/profile';
+            navigate(from, { replace: true });
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+      }
+    };
+  }, [isSuccess, navigate, location.state]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    if (error) clearError();
+    if (validationError) setValidationError('');
+  };
+
+  const validateForm = () => {
+    if (formData.password !== formData.confirmPassword) {
+      setValidationError('Passwords do not match');
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setValidationError('Password must be at least 6 characters long');
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    setLoading(true);
+    if (!validateForm()) return;
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }),
+      await register({
+        email: formData.email,
+        password: formData.password
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
+      setIsSuccess(true);
+      setCountdown(3);
+    } catch (error) {
+      let message = 'Registration failed.';
+      if (error && error.message) {
+        try {
+          const parsed = JSON.parse(error.message);
+          if (typeof parsed === 'object') {
+            if (Array.isArray(parsed)) {
+              message = parsed.join(' ');
+            } else {
+              message = Object.values(parsed).join(' ');
+            }
+          } else {
+            message = String(parsed);
+          }
+        } catch {
+          message = error.message;
+        }
       }
-
-      login(data.user, data.token);
-      navigate('/');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      setValidationError(message);
+      console.error('Registration failed:', error);
     }
   };
 
-  return (
-    <div className="register-container">
-      <div className="register-form-container">
-        <div className="register-header">
-          <h2 className="register-title">
-            Create your account
-          </h2>
-          <p className="register-subtitle">
-            Or{' '}
-            <Link to="/login" className="register-link">
-              sign in to your existing account
-            </Link>
-          </p>
+  const handleManualRedirect = () => {
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+    }
+    const from = location.state?.from?.pathname || '/profile';
+    navigate(from, { replace: true });
+  };
+
+  if (isSuccess) {
+    return (
+      <div className="auth-container">
+        <div className="auth-card success">
+          <h1>Account Created Successfully!</h1>
+          <p>Welcome to Collectiverse!</p>
+          <p>Redirecting you to your profile in {countdown} seconds...</p>
+          <button 
+            className="auth-button" 
+            onClick={handleManualRedirect}
+          >
+            Go to Profile Now
+          </button>
         </div>
-        <form className="register-form" onSubmit={handleSubmit}>
-          {error && (
-            <div className="error-message">
-              <div className="error-text">{error}</div>
-            </div>
-          )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="auth-container">
+      <div className="auth-card">
+        <h1>Create Account</h1>
+        <p>Join our community of collectors</p>
+
+        {(error || validationError) && (
+          <div className="auth-error">{error || validationError}</div>
+        )}
+
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="username" className="sr-only">
-              Username
-            </label>
+            <label htmlFor="email">Email</label>
             <input
-              id="username"
-              name="username"
-              type="text"
-              required
-              className="form-input"
-              placeholder="Username"
-              value={formData.username}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="email" className="sr-only">
-              Email address
-            </label>
-            <input
+              type="email"
               id="email"
               name="email"
-              type="email"
-              required
-              className="form-input"
-              placeholder="Email address"
               value={formData.email}
               onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password" className="sr-only">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
               required
-              className="form-input"
-              placeholder="Password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="confirmPassword" className="sr-only">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              className="form-input"
-              placeholder="Confirm Password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="register-button"
-          >
-            {loading ? 'Creating account...' : 'Create account'}
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <button type="submit" className="auth-button" disabled={isLoading}>
+            {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
+
+        <p className="auth-footer">
+          Already have an account?{' '}
+          <Link to="/login" className="auth-link">
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );
