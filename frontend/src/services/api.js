@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { useAuthStore } from '../stores/authStore';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -13,10 +14,7 @@ const api = axios.create({
 // Add a request interceptor to add the auth token to requests
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('auth-storage')
-      ? JSON.parse(localStorage.getItem('auth-storage')).state.token
-      : null;
-    
+    const token = useAuthStore.getState().token;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -34,7 +32,7 @@ api.interceptors.response.use(
     console.error('API Error:', error);
     if (error.response?.status === 401) {
       // Handle unauthorized access
-      localStorage.removeItem('auth-storage');
+      useAuthStore.getState().logout();
       window.location.href = '/login';
     }
     return Promise.reject(error);
