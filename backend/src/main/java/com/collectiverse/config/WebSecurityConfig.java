@@ -2,8 +2,6 @@ package com.collectiverse.config;
 
 import com.collectiverse.security.JwtAccessDeniedHandler;
 import com.collectiverse.security.JwtAuthenticationEntryPoint;
-import com.collectiverse.security.JwtAuthenticationFailureHandler;
-import com.collectiverse.security.JwtAuthenticationSuccessHandler;
 import com.collectiverse.security.JwtAuthenticationFilter;
 import com.collectiverse.security.JwtLogoutHandler;
 import com.collectiverse.service.CustomUserDetailsService;
@@ -39,8 +37,6 @@ public class WebSecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final JwtAccessDeniedHandler accessDeniedHandler;
-    private final JwtAuthenticationFailureHandler authenticationFailureHandler;
-    private final JwtAuthenticationSuccessHandler authenticationSuccessHandler;
     private final JwtLogoutHandler logoutHandler;
 
     @Bean
