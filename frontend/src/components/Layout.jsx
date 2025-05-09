@@ -1,16 +1,15 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Navbar from './navigation/Navbar';
-import Footer from './navigation/Footer';
+import Navbar from './layout/Navbar';
+import Footer from './layout/Footer';
+import './Layout.css';
 
 const Layout = () => (
-  <div className="app-container">
+  <>
     <Navbar />
-    <main className="main-content">
-      <Outlet />
-    </main>
+    <Outlet />
     <Footer />
-  </div>
+  </>
 );
 
 export default Layout; 
