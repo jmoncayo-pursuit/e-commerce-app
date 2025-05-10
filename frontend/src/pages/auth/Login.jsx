@@ -16,25 +16,15 @@ const Login = () => {
     password: ''
   });
 
-  // Effect to handle navigation after successful login
+  // Effect to handle the countdown display
   useEffect(() => {
+    let intervalId;
+    
     if (isSuccess && isAuthenticated) {
-      countdownRef.current = setInterval(() => {
+      intervalId = setInterval(() => {
         setCountdown(prev => {
           if (prev <= 1) {
-            clearInterval(countdownRef.current);
-            // If we're already on the profile page, go to home
-            if (location.pathname === '/profile') {
-              navigate('/', { replace: true });
-            } 
-            // If we have a from path in location state, go there
-            else if (location.state?.from?.pathname) {
-              navigate(location.state.from.pathname, { replace: true });
-            } 
-            // Otherwise go to profile
-            else {
-              navigate('/profile', { replace: true });
-            }
+            clearInterval(intervalId);
             return 0;
           }
           return prev - 1;
@@ -43,8 +33,36 @@ const Login = () => {
     }
 
     return () => {
-      if (countdownRef.current) {
-        clearInterval(countdownRef.current);
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isSuccess, isAuthenticated]);
+
+  // Effect to handle navigation after successful login
+  useEffect(() => {
+    let timeoutId;
+    
+    if (isSuccess && isAuthenticated) {
+      timeoutId = setTimeout(() => {
+        // If we're already on the profile page, go to home
+        if (location.pathname === '/profile') {
+          navigate('/', { replace: true });
+        } 
+        // If we have a from path in location state, go there
+        else if (location.state?.from?.pathname) {
+          navigate(location.state.from.pathname, { replace: true });
+        } 
+        // Otherwise go to profile
+        else {
+          navigate('/profile', { replace: true });
+        }
+      }, 3000); // Fixed 3 second delay
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
     };
   }, [isSuccess, isAuthenticated, navigate, location]);
@@ -63,16 +81,13 @@ const Login = () => {
     try {
       await login(formData);
       setIsSuccess(true);
-      setCountdown(3);
+      setCountdown(3); // Reset countdown when login is successful
     } catch (error) {
       console.error('Login failed:', error);
     }
   };
 
   const handleManualRedirect = () => {
-    if (countdownRef.current) {
-      clearInterval(countdownRef.current);
-    }
     if (location.pathname === '/profile') {
       navigate('/', { replace: true });
     } else if (location.state?.from?.pathname) {

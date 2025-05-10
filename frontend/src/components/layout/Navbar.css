@@ -188,22 +188,28 @@
   border: 1px solid #e5e7eb;
   border-radius: 4px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  min-width: 160px;
+  min-width: 120px;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0.25rem 0;
 }
 
 .dropdown-item {
   display: block;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   text-align: left;
   background: none;
   border: none;
   color: #4b5563;
-  font-size: 0.875rem;
+  font-size: 0.97rem;
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.2s;
+  border-radius: 0;
+  margin: 0;
 }
 
 .dropdown-item:hover {
@@ -287,12 +293,19 @@
 }
 
 @media (max-width: 640px) {
+  .navbar-content {
+    align-items: center;
+    height: 56px;
+  }
+  .navbar-actions {
+    margin-left: auto;
+    align-items: center;
+  }
+  .user-menu {
+    margin-right: 0.25rem;
+  }
   .auth-buttons {
     display: none;
-  }
-
-  .navbar-content {
-    height: 56px;
   }
 
   .navbar-container {
@@ -332,4 +345,40 @@
   font-weight: 500;
   margin-left: 0.25rem;
   white-space: nowrap;
+}
+
+.user-avatar-text {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #60a5fa;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 50%;
+  text-transform: uppercase;
+}
+
+.mobile-logout-btn {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0;
+  background: #f87171;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-top: 0.75rem;
+  box-shadow: 0 2px 8px rgba(248,113,113,0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  text-align: center;
+}
+.mobile-logout-btn:hover,
+.mobile-logout-btn:focus {
+  background: #ef4444;
+  box-shadow: 0 4px 16px rgba(248,113,113,0.15);
 } 

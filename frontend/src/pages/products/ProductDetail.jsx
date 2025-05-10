@@ -97,11 +97,28 @@ const ProductDetail = () => {
             <h2>Seller Information</h2>
             <div className="seller-info">
               <div className="seller-profile">
-                <img 
-                  src={product.seller.profileImageUrl} 
-                  alt={product.seller.name}
-                  className="seller-avatar"
-                />
+                {product.seller.profileImageUrl ? (
+                  <img 
+                    src={product.seller.profileImageUrl} 
+                    alt={product.seller.name}
+                    className="seller-avatar"
+                  />
+                ) : (
+                  <span style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 48,
+                    height: 48,
+                    backgroundColor: '#60a5fa',
+                    color: 'white',
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    borderRadius: '50%'
+                  }}>
+                    {(product.seller.name ? product.seller.name.substring(0, 2) : 'U').toUpperCase()}
+                  </span>
+                )}
                 <div className="seller-details">
                   <h3>{product.seller.name}</h3>
                   <div className="seller-rating">

@@ -39,7 +39,7 @@ const useProductStore = create(
                 {
                   id: 'img1',
                   productId: '1',
-                  imageUrl: 'https://images.unsplash.com/photo-1608889335941-32ac5f2041b9?ixlib=rb-4.0.3',
+                  imageUrl: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80',
                   isPrimary: true
                 }
               ],
@@ -50,7 +50,7 @@ const useProductStore = create(
                 totalSales: 150,
                 memberSince: '2018',
                 responseTime: 'within 24 hours',
-                profileImageUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3'
+                profileImageUrl: 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=800&q=80'
               },
               stock: 1,
               location: 'New York, NY',
@@ -80,7 +80,7 @@ const useProductStore = create(
                 {
                   id: 'img2',
                   productId: '2',
-                  imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?ixlib=rb-4.0.3',
+                  imageUrl: 'https://images.unsplash.com/photo-1519121788664-1b1c1c6a0c85?auto=format&fit=crop&w=800&q=80',
                   isPrimary: true
                 }
               ],
@@ -91,7 +91,7 @@ const useProductStore = create(
                 totalSales: 89,
                 memberSince: '2019',
                 responseTime: 'within 12 hours',
-                profileImageUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3'
+                profileImageUrl: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?auto=format&fit=crop&w=800&q=80'
               },
               stock: 1,
               location: 'Los Angeles, CA',
@@ -120,7 +120,7 @@ const useProductStore = create(
                 {
                   id: 'img3',
                   productId: '3',
-                  imageUrl: 'https://images.unsplash.com/photo-1608889335941-32ac5f2041b9?ixlib=rb-4.0.3',
+                  imageUrl: 'https://images.unsplash.com/photo-1519121788664-1b1c1c6a0c85?auto=format&fit=crop&w=800&q=80',
                   isPrimary: true
                 }
               ],
@@ -131,7 +131,7 @@ const useProductStore = create(
                 totalSales: 203,
                 memberSince: '2017',
                 responseTime: 'within 24 hours',
-                profileImageUrl: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?ixlib=rb-4.0.3'
+                profileImageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80'
               },
               stock: 1,
               location: 'Chicago, IL',
@@ -160,7 +160,7 @@ const useProductStore = create(
                 {
                   id: 'img4',
                   productId: '4',
-                  imageUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3',
+                  imageUrl: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=800&q=80',
                   isPrimary: true
                 }
               ],
@@ -171,7 +171,7 @@ const useProductStore = create(
                 totalSales: 312,
                 memberSince: '2016',
                 responseTime: 'within 6 hours',
-                profileImageUrl: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-4.0.3'
+                profileImageUrl: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=800&q=80'
               },
               stock: 1,
               location: 'Seattle, WA',

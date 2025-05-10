@@ -98,7 +98,7 @@
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
+  /* transform: translateY(-4px); */
 }
 
 .product-image {
@@ -162,7 +162,7 @@
 }
 
 .category-card:hover {
-  transform: translateY(-4px);
+  /* transform: translateY(-4px); */
 }
 
 .category-image {

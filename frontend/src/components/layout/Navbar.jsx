@@ -85,37 +85,64 @@ const Navbar = () => {
                   aria-controls="user-dropdown"
                 >
                   <span className="user-avatar-row">
-                    <img
-                      src={user?.avatar}
-                      alt={user?.username}
-                      className="user-avatar"
-                    />
+                    {user?.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.username}
+                        className="user-avatar"
+                      />
+                    ) : (
+                      <span className="user-avatar-text" style={{ backgroundColor: '#60a5fa', color: 'white', padding: '5px', borderRadius: '50%' }}>
+                        {user?.email ? user.email.substring(0, 2).toUpperCase() : 'U'}
+                      </span>
+                    )}
                     <span className="user-menu-username">{user?.username}</span>
                   </span>
                 </button>
 
                 {isUserMenuOpen && (
                   <div id="user-dropdown" className="user-dropdown">
-                    <Link
-                      to="/profile"
-                      className="dropdown-item"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      Profile
-                    </Link>
-                    <Link
-                      to="/orders"
-                      className="dropdown-item"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      Orders
-                    </Link>
-                    <button
-                      className="dropdown-item"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </button>
+                    {!isAuthenticated ? (
+                      <>
+                        <Link
+                          to="/login"
+                          className="dropdown-item"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          Login
+                        </Link>
+                        <Link
+                          to="/register"
+                          className="dropdown-item"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          Register
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link
+                          to="/profile"
+                          className="dropdown-item"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          Profile
+                        </Link>
+                        <Link
+                          to="/orders"
+                          className="dropdown-item"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          Orders
+                        </Link>
+                        <button
+                          className="dropdown-item"
+                          onClick={handleLogout}
+                        >
+                          Logout
+                        </button>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -162,7 +189,7 @@ const Navbar = () => {
             >
               <span className="cart-icon">🛒</span> Cart
             </Link>
-            {!isAuthenticated && (
+            {!isAuthenticated ? (
               <>
                 <Link
                   to="/login"
@@ -179,6 +206,13 @@ const Navbar = () => {
                   Register
                 </Link>
               </>
+            ) : (
+              <button
+                className="mobile-logout-btn"
+                onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+              >
+                Logout
+              </button>
             )}
           </div>
         )}

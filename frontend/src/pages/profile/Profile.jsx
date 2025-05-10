@@ -76,7 +76,24 @@ const Profile = () => {
       )}
       <div className="profile-header">
         <div className="profile-avatar">
-          <img src={user.avatar} alt={user.username} />
+          {user.avatar ? (
+            <img src={user.avatar} alt={user.username} />
+          ) : (
+            <span style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100%',
+              backgroundColor: '#60a5fa',
+              color: 'white',
+              fontSize: '2.5rem',
+              fontWeight: 'bold',
+              borderRadius: '50%'
+            }}>
+              {(user.email ? user.email.substring(0, 2) : user.username ? user.username.substring(0, 2) : 'U').toUpperCase()}
+            </span>
+          )}
         </div>
         <div className="profile-info">
           <h1>{user.username}</h1>

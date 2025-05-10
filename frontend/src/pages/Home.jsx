@@ -3,7 +3,15 @@ import { Link } from 'react-router-dom';
 import useProductStore from '../stores/productStore';
 import './Home.css';
 
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3';
+const FALLBACK_IMAGE = '/images/collectiverse-icon.png';
+
+// Category images
+const CATEGORY_IMAGES = {
+  comics: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=60', // Stack of comic books
+  figures: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=60', // Superhero action figures
+  cards: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&q=60', // Trading cards
+  posters: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=60' // Wall of posters
+};
 
 const Home = () => {
   const { products, isLoading } = useProductStore(state => ({
@@ -15,7 +23,7 @@ const Home = () => {
 
   return (
     <div className="home">
-      <section className="hero">
+      <section className="hero" style={{ backgroundImage: 'url(/images/collectiversebackdrop.jpeg)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
         <div className="hero-content">
           <h1>Welcome to Collectiverse</h1>
           <p>Your ultimate destination for rare collectibles and memorabilia</p>
@@ -45,7 +53,7 @@ const Home = () => {
               >
                 <div className="product-image">
                   <img
-                    src={idx === 0 ? FALLBACK_IMAGE : (product.images[0]?.imageUrl || FALLBACK_IMAGE)}
+                    src={product.images[0]?.imageUrl || FALLBACK_IMAGE}
                     alt={product.title}
                     onError={e => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE; }}
                   />
@@ -69,7 +77,7 @@ const Home = () => {
           <Link to="/products?category=comics" className="category-card">
             <div className="category-image">
               <img
-                src="https://images.unsplash.com/photo-1612036782180-6f44e15b5b1a?w=800&auto=format&fit=crop&q=60"
+                src={CATEGORY_IMAGES.comics}
                 alt="Comics"
                 onError={e => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE; }}
               />
@@ -79,7 +87,7 @@ const Home = () => {
           <Link to="/products?category=figures" className="category-card">
             <div className="category-image">
               <img
-                src="https://images.unsplash.com/photo-1612036782180-6f44e15b5b1a?w=800&auto=format&fit=crop&q=60"
+                src={CATEGORY_IMAGES.figures}
                 alt="Action Figures"
                 onError={e => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE; }}
               />
@@ -89,7 +97,7 @@ const Home = () => {
           <Link to="/products?category=cards" className="category-card">
             <div className="category-image">
               <img
-                src="https://images.unsplash.com/photo-1612036782180-6f44e15b5b1a?w=800&auto=format&fit=crop&q=60"
+                src={CATEGORY_IMAGES.cards}
                 alt="Trading Cards"
                 onError={e => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE; }}
               />
@@ -99,7 +107,7 @@ const Home = () => {
           <Link to="/products?category=posters" className="category-card">
             <div className="category-image">
               <img
-                src="https://images.unsplash.com/photo-1612036782180-6f44e15b5b1a?w=800&auto=format&fit=crop&q=60"
+                src={CATEGORY_IMAGES.posters}
                 alt="Posters"
                 onError={e => { e.target.onerror = null; e.target.src = FALLBACK_IMAGE; }}
               />
