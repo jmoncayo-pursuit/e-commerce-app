@@ -102,47 +102,26 @@ const Navbar = () => {
 
                 {isUserMenuOpen && (
                   <div id="user-dropdown" className="user-dropdown">
-                    {!isAuthenticated ? (
-                      <>
-                        <Link
-                          to="/login"
-                          className="dropdown-item"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          Login
-                        </Link>
-                        <Link
-                          to="/register"
-                          className="dropdown-item"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          Register
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link
-                          to="/profile"
-                          className="dropdown-item"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          Profile
-                        </Link>
-                        <Link
-                          to="/orders"
-                          className="dropdown-item"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          Orders
-                        </Link>
-                        <button
-                          className="dropdown-item"
-                          onClick={handleLogout}
-                        >
-                          Logout
-                        </button>
-                      </>
-                    )}
+                    <Link
+                      to="/profile"
+                      className="dropdown-item"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/orders"
+                      className="dropdown-item"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      Orders
+                    </Link>
+                    <button
+                      className="dropdown-item"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
                   </div>
                 )}
               </div>
