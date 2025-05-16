@@ -1,76 +1,65 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const useCartStore = create(
+export const useCartStore = create(
   persist(
     (set, get) => ({
       items: [],
-      total: 0,
-
-      getTotalItems: () => {
-        return get().items.reduce((total, item) => total + item.quantity, 0);
-      },
-
-      addToCart: (product) => {
+      
+      addItem: (product, quantity = 1) => {
         const { items } = get();
         const existingItem = items.find(item => item.id === product.id);
-
+        
         if (existingItem) {
+          // If item exists, update quantity
           set({
-            items: items.map(item =>
-              item.id === product.id
-                ? { ...item, quantity: item.quantity + 1 }
+            items: items.map(item => 
+              item.id === product.id 
+                ? { ...item, quantity: item.quantity + quantity } 
                 : item
-            ),
-            total: get().total + product.price
+            )
           });
         } else {
-          set({
-            items: [...items, { ...product, quantity: 1 }],
-            total: get().total + product.price
-          });
+          // If item doesn't exist, add it
+          set({ items: [...items, { ...product, quantity }] });
         }
       },
-
-      removeFromCart: (productId) => {
+      
+      removeItem: (productId) => {
         const { items } = get();
-        const itemToRemove = items.find(item => item.id === productId);
-        
-        if (itemToRemove) {
-          set({
-            items: items.filter(item => item.id !== productId),
-            total: get().total - (itemToRemove.price * itemToRemove.quantity)
-          });
-        }
+        set({ items: items.filter(item => item.id !== productId) });
       },
-
+      
       updateQuantity: (productId, quantity) => {
-        if (quantity < 1) return;
-        
         const { items } = get();
-        const item = items.find(item => item.id === productId);
-        
-        if (item) {
-          const quantityDiff = quantity - item.quantity;
-          set({
-            items: items.map(item =>
-              item.id === productId
-                ? { ...item, quantity }
-                : item
-            ),
-            total: get().total + (item.price * quantityDiff)
-          });
+        if (quantity <= 0) {
+          return get().removeItem(productId);
         }
+        
+        set({
+          items: items.map(item => 
+            item.id === productId ? { ...item, quantity } : item
+          )
+        });
       },
-
-      clearCart: () => {
-        set({ items: [], total: 0 });
+      
+      clearCart: () => set({ items: [] }),
+      
+      getItemCount: () => {
+        const { items } = get();
+        return items.reduce((total, item) => total + item.quantity, 0);
+      },
+      
+      getTotal: () => {
+        const { items } = get();
+        return items.reduce(
+          (total, item) => total + item.price * item.quantity, 
+          0
+        );
       }
     }),
     {
-      name: 'cart-storage',
+      name: 'cart-storage'
     }
   )
-);
-
-export default useCartStore; 
+); 

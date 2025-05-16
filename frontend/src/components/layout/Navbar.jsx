@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
+import { useCartStore } from '../../stores/cartStore';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -16,6 +17,8 @@ const Navbar = () => {
     isAuthenticated: state.isAuthenticated,
     logout: state.logout
   }));
+  
+  const cartItemCount = useCartStore(state => state.getItemCount());
 
   const handleLogout = () => {
     logout();
@@ -74,6 +77,9 @@ const Navbar = () => {
 
             <Link to="/cart" className="cart-link">
               <span className="cart-icon">🛒</span>
+              {cartItemCount > 0 && (
+                <span className="cart-count">{cartItemCount}</span>
+              )}
             </Link>
 
             {isAuthenticated ? (
