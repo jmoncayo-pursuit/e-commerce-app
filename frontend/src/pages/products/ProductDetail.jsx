@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useProductStore from '../../stores/productStore';
-import useCartStore from '../../stores/cartStore';
+import { useCartStore } from '../../stores/cartStore';
 import ImageWithFallback from '../../components/common/ImageWithFallback';
 import './ProductDetail.css';
 
@@ -9,7 +9,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products, loading, error, fetchProducts } = useProductStore();
-  const { addToCart } = useCartStore();
+  const { addItem } = useCartStore();
   
   const product = products.find(p => p.id === id);
 
@@ -44,7 +44,7 @@ const ProductDetail = () => {
   }
 
   const handleAddToCart = () => {
-    addToCart(product);
+    addItem(product);
     navigate('/cart');
   };
 
