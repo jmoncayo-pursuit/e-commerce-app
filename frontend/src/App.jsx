@@ -22,6 +22,8 @@ import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import { useAuthStore } from './stores/authStore';
+import ProductCreate from './pages/products/ProductCreate';
+import { Toaster } from 'react-hot-toast';
 import './App.css';
 
 function App() {
@@ -71,6 +73,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/products/create"
+          element={
+            <ProtectedRoute>
+              <ProductCreate />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Route>
     ),
@@ -85,6 +95,7 @@ function App() {
   return (
     <React.StrictMode>
       <RouterProvider router={router} />
+      <Toaster position="top-center" />
     </React.StrictMode>
   );
 }

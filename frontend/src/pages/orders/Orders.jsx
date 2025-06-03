@@ -78,7 +78,7 @@ const Orders = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="orders-container">
       <h1>Your Orders</h1>
@@ -108,7 +108,7 @@ const Orders = () => {
                   </span>
                 </div>
               </div>
-              
+
               <div className="order-items">
                 {order.items.map(item => (
                   <div key={item.id} className="order-item">
@@ -120,7 +120,7 @@ const Orders = () => {
                   </div>
                 ))}
               </div>
-              
+
               <div className="order-footer">
                 <div className="order-total">
                   <span>Total:</span>

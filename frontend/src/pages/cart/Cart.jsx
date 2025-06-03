@@ -33,7 +33,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="cart-container">
+  <div className="cart-container">
       <h1>Your Shopping Cart</h1>
       
       <div className="cart-items">
@@ -125,8 +125,8 @@ const Cart = () => {
           </button>
         </div>
       </div>
-    </div>
-  );
+  </div>
+);
 };
 
 export default Cart; 

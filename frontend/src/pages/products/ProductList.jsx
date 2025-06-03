@@ -2,11 +2,33 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useProductStore from '../../stores/productStore';
 import ImageWithFallback from '../../components/common/ImageWithFallback';
+import { useAuthStore } from '../../stores/authStore';
+import { productService } from '../../services/api';
 import './ProductList.css';
+
+const categories = [
+  'comics',
+  'figures',
+  'cards',
+  'posters',
+  'retro-games',
+];
+
+const conditions = [
+  'mint',
+  'near-mint',
+  'excellent',
+  'very-good',
+  'good',
+];
 
 const ProductList = () => {
   const { products, loading, error, fetchProducts, filterProducts, sortProducts, filters, setFilters } = useProductStore();
+  const { isAuthenticated } = useAuthStore();
   const [showFilters, setShowFilters] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCondition, setSelectedCondition] = useState('');
 
   useEffect(() => {
     fetchProducts();
@@ -46,6 +68,15 @@ const ProductList = () => {
 
   return (
     <div className="product-list-container">
+      <div className="product-list-header">
+        <h2>Collectibles</h2>
+        {isAuthenticated && (
+          <Link to="/products/create" className="create-product-button">
+            Create Product
+          </Link>
+        )}
+      </div>
+
       <button 
         className="filter-toggle-button"
         onClick={() => setShowFilters(!showFilters)}
@@ -56,31 +87,38 @@ const ProductList = () => {
       {showFilters && (
         <div className="filters-section">
           <div className="filter-controls">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+
             <select
-              name="category"
-              value={filters.category}
-              onChange={handleFilterChange}
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
               className="filter-select"
             >
               <option value="">All Categories</option>
-              <option value="comics">Comics</option>
-              <option value="action-figures">Action Figures</option>
-              <option value="retro-games">Retro Games</option>
-              <option value="trading-cards">Trading Cards</option>
+              {categories.map(category => (
+                <option key={category} value={category}>
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </option>
+              ))}
             </select>
 
             <select
-              name="condition"
-              value={filters.condition}
-              onChange={handleFilterChange}
+              value={selectedCondition}
+              onChange={(e) => setSelectedCondition(e.target.value)}
               className="filter-select"
             >
               <option value="">All Conditions</option>
-              <option value="mint">Mint</option>
-              <option value="near-mint">Near Mint</option>
-              <option value="excellent">Excellent</option>
-              <option value="very-good">Very Good</option>
-              <option value="good">Good</option>
+              {conditions.map(condition => (
+                <option key={condition} value={condition}>
+                  {condition.charAt(0).toUpperCase() + condition.slice(1)}
+                </option>
+              ))}
             </select>
 
             <div className="price-range">
@@ -139,16 +177,22 @@ const ProductList = () => {
                 <span className="product-year">{product.year}</span>
               </div>
               <div className="seller-info">
-                <span className="seller-name">{product.seller.name}</span>
-                <span className="seller-rating">★ {product.seller.rating}</span>
+                <span className="seller-name">{product.seller?.name || 'Anonymous Seller'}</span>
+                <span className="seller-rating">★ {product.seller?.rating || 'N/A'}</span>
               </div>
               <div className="product-location">
-                <span>📍 {product.location}</span>
+                <span>📍 {product.location || 'Location not specified'}</span>
               </div>
             </div>
           </Link>
         ))}
       </div>
+
+      {filteredProducts.length === 0 && (
+        <div className="no-products">
+          No products found matching your criteria.
+        </div>
+      )}
     </div>
   );
 };

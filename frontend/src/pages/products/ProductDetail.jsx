@@ -53,11 +53,26 @@ const ProductDetail = () => {
       <div className="product-detail-grid">
         {/* Product Images */}
         <div className="product-images">
-          <div className="main-image">
+          <div className="main-image" style={{
+            backgroundImage: "url('/images/hero-background.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            width: '100%',
+            height: '400px',
+            position: 'relative'
+          }}>
             <ImageWithFallback
               src={product.images[0]?.imageUrl}
               alt={product.name}
               className="product-image"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
             />
           </div>
           <div className="thumbnail-grid">
@@ -147,15 +162,15 @@ const ProductDetail = () => {
             <div className="shipping-details">
               <div className="shipping-method">
                 <span className="method-label">Method:</span>
-                <span className="method-value">{product.shipping.method}</span>
+                <span className="method-value">{product.shipping?.method || 'Standard Shipping'}</span>
               </div>
               <div className="shipping-price">
                 <span className="price-label">Shipping Cost:</span>
-                <span className="price-value">${product.shipping.price.toFixed(2)}</span>
+                <span className="price-value">${(product.shipping?.price || 5.99).toFixed(2)}</span>
               </div>
               <div className="shipping-time">
                 <span className="time-label">Estimated Delivery:</span>
-                <span className="time-value">{product.shipping.estimatedDelivery}</span>
+                <span className="time-value">{product.shipping?.estimatedDelivery || '3-5 business days'}</span>
               </div>
             </div>
           </div>
@@ -164,7 +179,7 @@ const ProductDetail = () => {
           <div className="product-details-section">
             <h2>Product Details</h2>
             <div className="details-grid">
-              {Object.entries(product.details).map(([key, value]) => (
+              {Object.entries(product.details || {}).map(([key, value]) => (
                 <div key={key} className="detail-item">
                   <span className="detail-label">{key.replace(/([A-Z])/g, ' $1').trim()}:</span>
                   <span className="detail-value">{value}</span>

@@ -9,12 +9,12 @@ export const useCartStore = create(
       addItem: (product, quantity = 1) => {
         const { items } = get();
         const existingItem = items.find(item => item.id === product.id);
-        
+
         if (existingItem) {
           // If item exists, update quantity
           set({
-            items: items.map(item => 
-              item.id === product.id 
+            items: items.map(item =>
+              item.id === product.id
                 ? { ...item, quantity: item.quantity + quantity } 
                 : item
             )
@@ -24,20 +24,20 @@ export const useCartStore = create(
           set({ items: [...items, { ...product, quantity }] });
         }
       },
-      
+
       removeItem: (productId) => {
         const { items } = get();
         set({ items: items.filter(item => item.id !== productId) });
       },
-      
+
       updateQuantity: (productId, quantity) => {
         const { items } = get();
         if (quantity <= 0) {
           return get().removeItem(productId);
         }
         
-        set({
-          items: items.map(item => 
+          set({
+            items: items.map(item =>
             item.id === productId ? { ...item, quantity } : item
           )
         });
@@ -62,4 +62,4 @@ export const useCartStore = create(
       name: 'cart-storage'
     }
   )
-); 
+);

@@ -106,7 +106,7 @@ const Checkout = () => {
   }
   
   return (
-    <div className="checkout-container">
+  <div className="checkout-container">
       <h1>Checkout</h1>
       
       <div className="checkout-content">
@@ -304,8 +304,8 @@ const Checkout = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+  </div>
+);
 };
 
 export default Checkout; 
