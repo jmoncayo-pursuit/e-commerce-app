@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const useCartStore = create(
+export const useCartStore = create(
   persist(
     (set, get) => ({
       items: [],
@@ -62,5 +62,3 @@ const useCartStore = create(
     }
   )
 );
-
-export default useCartStore;

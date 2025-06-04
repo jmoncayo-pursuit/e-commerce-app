@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { productService } from '../../services/api';
 import { useAuthStore } from '../../stores/authStore';
-import useCartStore from '../../stores/cartStore';
+import { useCartStore } from '../../stores/cartStore';
 import toast from 'react-hot-toast';
 import ImageWithFallback from '../../components/common/ImageWithFallback';
 import './ProductDetail.css';

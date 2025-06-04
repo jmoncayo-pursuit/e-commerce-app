@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import useCartStore from '../../stores/cartStore';
+import { useCartStore } from '../../stores/cartStore';
 import { useAuthStore } from '../../stores/authStore';
 import toast from 'react-hot-toast';
 import './Cart.css';

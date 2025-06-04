@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
-import useCartStore from '../../stores/cartStore';
+import { useCartStore } from '../../stores/cartStore';
 import './Navigation.css';
 
 const Navigation = () => {
