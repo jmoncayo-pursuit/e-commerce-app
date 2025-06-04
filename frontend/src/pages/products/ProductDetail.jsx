@@ -33,13 +33,17 @@ const ProductDetail = () => {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!isAuthenticated) {
       toast.error('Please log in to add items to cart');
       return;
     }
-    addItem(product, quantity);
-    toast.success('Added to cart!');
+    try {
+      await addItem(product, quantity);
+      toast.success('Added to cart!');
+    } catch (err) {
+      toast.error('Failed to add item to cart');
+    }
   };
 
   const handleEdit = () => {
@@ -76,7 +80,7 @@ const ProductDetail = () => {
             position: 'relative'
           }}>
             <ImageWithFallback
-              src={product.images[0]?.imageUrl}
+              src={product.images?.[0]?.imageUrl || product.imageUrl}
               alt={product.name}
               className="product-image"
               style={{
@@ -89,17 +93,19 @@ const ProductDetail = () => {
               }}
             />
           </div>
-          <div className="thumbnail-grid">
-            {product.images.map((image, index) => (
-              <div key={image.id} className="thumbnail">
-                <ImageWithFallback
-                  src={image.imageUrl}
-                  alt={`${product.name} - Image ${index + 1}`}
-                  className="thumbnail-image"
-                />
-              </div>
-            ))}
-          </div>
+          {product.images && product.images.length > 0 && (
+            <div className="thumbnail-grid">
+              {product.images.map((image, index) => (
+                <div key={image.id || index} className="thumbnail">
+                  <ImageWithFallback
+                    src={image.imageUrl}
+                    alt={`${product.name} - Image ${index + 1}`}
+                    className="thumbnail-image"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Info */}
@@ -140,10 +146,10 @@ const ProductDetail = () => {
             <h2>Seller Information</h2>
             <div className="seller-info">
               <div className="seller-profile">
-                {product.seller.profileImageUrl ? (
+                {product.seller?.profileImageUrl ? (
                   <img 
                     src={product.seller.profileImageUrl} 
-                    alt={product.seller.name}
+                    alt={product.seller.name || 'Seller'}
                     className="seller-avatar"
                   />
                 ) : (
@@ -159,26 +165,26 @@ const ProductDetail = () => {
                     fontWeight: 'bold',
                     borderRadius: '50%'
                   }}>
-                    {(product.seller.name ? product.seller.name.substring(0, 2) : 'U').toUpperCase()}
+                    {(product.seller?.name ? product.seller.name.substring(0, 2) : 'U').toUpperCase()}
                   </span>
                 )}
                 <div className="seller-details">
-                  <h3>{product.seller.name}</h3>
+                  <h3>{product.seller?.name || 'Anonymous Seller'}</h3>
                   <div className="seller-rating">
                     <span className="stars">★★★★★</span>
-                    <span className="rating">{product.seller.rating}</span>
+                    <span className="rating">{product.seller?.rating || 'N/A'}</span>
                   </div>
-                  <p>Member since {product.seller.memberSince}</p>
+                  <p>Member since {product.seller?.memberSince || 'N/A'}</p>
                 </div>
               </div>
               <div className="seller-stats">
                 <div className="stat">
                   <span className="stat-label">Response Time</span>
-                  <span className="stat-value">{product.seller.responseTime}</span>
+                  <span className="stat-value">{product.seller?.responseTime || 'N/A'}</span>
                 </div>
                 <div className="stat">
                   <span className="stat-label">Total Sales</span>
-                  <span className="stat-value">{product.seller.totalSales}</span>
+                  <span className="stat-value">{product.seller?.totalSales || 'N/A'}</span>
                 </div>
               </div>
             </div>

@@ -8,7 +8,7 @@ public class CartItemResponseDTO {
     private Long productId;
     private String productName;
     private String productImage;
-    private Double price;
     private Integer quantity;
+    private Double price;
     private Double subtotal;
 }

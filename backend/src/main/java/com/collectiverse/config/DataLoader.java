@@ -106,7 +106,7 @@ public class DataLoader implements CommandLineRunner {
         ironman.setName("Iron Man Mark 42 Figure");
         ironman.setDescription("Highly detailed Iron Man action figure from the Marvel Cinematic Universe.");
         ironman.setPrice(new BigDecimal("89.99"));
-        ironman.setImageUrl("https://via.placeholder.com/300x400?text=Iron+Man+Figure");
+        ironman.setImageUrl("/images/ironman-mark42.png");
         ironman.setCategory("Action Figures");
         ironman.setStockQuantity(10);
         ironman.setSeller(seller);

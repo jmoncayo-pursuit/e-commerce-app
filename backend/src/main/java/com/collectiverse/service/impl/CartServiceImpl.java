@@ -3,6 +3,7 @@ package com.collectiverse.service.impl;
 import com.collectiverse.dto.CartItemDTO;
 import com.collectiverse.dto.CartItemResponseDTO;
 import com.collectiverse.dto.CartResponseDTO;
+import com.collectiverse.dto.ProductResponseDTO;
 import com.collectiverse.exception.ResourceNotFoundException;
 import com.collectiverse.model.Cart;
 import com.collectiverse.model.CartItem;
@@ -31,10 +32,20 @@ public class CartServiceImpl implements CartService {
     private final UserRepository userRepository;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public CartResponseDTO getCart(Long userId) {
-        Cart cart = getOrCreateCart(userId);
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseGet(() -> createNewCart(userId));
         return mapToCartResponseDTO(cart);
+    }
+
+    @Transactional
+    protected Cart createNewCart(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Cart cart = new Cart();
+        cart.setUser(user);
+        return cartRepository.save(cart);
     }
 
     @Override
@@ -91,13 +102,7 @@ public class CartServiceImpl implements CartService {
 
     private Cart getOrCreateCart(Long userId) {
         return cartRepository.findByUserId(userId)
-                .orElseGet(() -> {
-                    User user = userRepository.findById(userId)
-                            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-                    Cart cart = new Cart();
-                    cart.setUser(user);
-                    return cartRepository.save(cart);
-                });
+                .orElseGet(() -> createNewCart(userId));
     }
 
     private CartResponseDTO mapToCartResponseDTO(Cart cart) {
