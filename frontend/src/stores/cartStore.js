@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export const useCartStore = create(
+const useCartStore = create(
   persist(
     (set, get) => ({
       items: [],
-      
+      loading: false,
+      error: null,
+
       addItem: (product, quantity = 1) => {
         const { items } = get();
         const existingItem = items.find(item => item.id === product.id);
@@ -31,26 +33,23 @@ export const useCartStore = create(
       },
 
       updateQuantity: (productId, quantity) => {
+        if (quantity < 1) return;
         const { items } = get();
-        if (quantity <= 0) {
-          return get().removeItem(productId);
-        }
-        
-          set({
-            items: items.map(item =>
+        set({
+          items: items.map(item =>
             item.id === productId ? { ...item, quantity } : item
-          )
+          ),
         });
       },
       
       clearCart: () => set({ items: [] }),
       
-      getItemCount: () => {
+      getTotalItems: () => {
         const { items } = get();
         return items.reduce((total, item) => total + item.quantity, 0);
       },
       
-      getTotal: () => {
+      getTotalPrice: () => {
         const { items } = get();
         return items.reduce(
           (total, item) => total + item.price * item.quantity, 
@@ -63,3 +62,5 @@ export const useCartStore = create(
     }
   )
 );
+
+export default useCartStore;

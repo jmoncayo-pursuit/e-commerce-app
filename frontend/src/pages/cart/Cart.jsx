@@ -1,132 +1,126 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useCartStore } from '../../stores/cartStore';
+import { useNavigate } from 'react-router-dom';
+import useCartStore from '../../stores/cartStore';
 import { useAuthStore } from '../../stores/authStore';
+import toast from 'react-hot-toast';
 import './Cart.css';
 
 const Cart = () => {
-  const { items, removeItem, updateQuantity, clearCart, getTotal } = useCartStore();
-  const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
-
-  const handleUpdateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    updateQuantity(id, newQuantity);
-  };
+  const { isAuthenticated } = useAuthStore();
+  const {
+    items,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    getTotalItems,
+    getTotalPrice,
+  } = useCartStore();
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: '/cart', message: 'Please log in to checkout' } });
+      toast.error('Please log in to checkout');
+      navigate('/login');
       return;
     }
-    navigate('/checkout');
+    // TODO: Implement checkout process
+    toast.success('Checkout functionality coming soon!');
   };
 
   if (items.length === 0) {
     return (
-      <div className="empty-cart">
-        <h2>Your Cart is Empty</h2>
-        <p>Looks like you haven't added any items to your cart yet.</p>
-        <Link to="/products" className="shop-button">Browse Products</Link>
+      <div className="cart-container">
+        <div className="empty-cart">
+          <h2>Your cart is empty</h2>
+          <p>Add some collectibles to your cart to see them here!</p>
+          <button
+            className="continue-shopping"
+            onClick={() => navigate('/products')}
+          >
+            Continue Shopping
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-  <div className="cart-container">
-      <h1>Your Shopping Cart</h1>
-      
-      <div className="cart-items">
-        <div className="cart-header">
-          <span className="product-col">Product</span>
-          <span className="price-col">Price</span>
-          <span className="quantity-col">Quantity</span>
-          <span className="total-col">Total</span>
-          <span className="action-col">Action</span>
-        </div>
-        
-        {items.map(item => (
-          <div key={item.id} className="cart-item">
-            <div className="product-col">
-              <img 
-                src={item.image || 'https://via.placeholder.com/80'} 
-                alt={item.name} 
+    <div className="cart-container">
+      <h1>Shopping Cart</h1>
+      <div className="cart-content">
+        <div className="cart-items">
+          {items.map((item) => (
+            <div key={item.id} className="cart-item">
+              <img
+                src={item.imageUrl || '/placeholder-image.jpg'}
+                alt={item.title}
                 className="item-image"
               />
               <div className="item-details">
-                <h3>{item.name}</h3>
-                <p className="item-category">{item.category}</p>
+                <h3>{item.title}</h3>
+                <p className="item-price">${item.price.toFixed(2)}</p>
+                <p className="item-condition">Condition: {item.condition}</p>
               </div>
-            </div>
-            
-            <div className="price-col">${item.price.toFixed(2)}</div>
-            
-            <div className="quantity-col">
-              <div className="quantity-control">
-                <button 
-                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                  className="quantity-btn"
+              <div className="quantity-controls">
+                <button
+                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                  disabled={item.quantity <= 1}
                 >
                   -
                 </button>
-                <input
-                  type="number"
-                  min="1"
-                  value={item.quantity}
-                  onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value) || 1)}
-                  className="quantity-input"
-                />
-                <button 
-                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                  className="quantity-btn"
+                <span>{item.quantity}</span>
+                <button
+                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
                 >
                   +
                 </button>
               </div>
-            </div>
-            
-            <div className="total-col">${(item.price * item.quantity).toFixed(2)}</div>
-            
-            <div className="action-col">
-              <button 
+              <div className="item-total">
+                ${(item.price * item.quantity).toFixed(2)}
+              </div>
+              <button
+                className="remove-item"
                 onClick={() => removeItem(item.id)}
-                className="remove-btn"
-                aria-label="Remove item"
               >
-                ✕
+                Remove
               </button>
             </div>
+          ))}
+        </div>
+
+        <div className="cart-summary">
+          <h2>Order Summary</h2>
+          <div className="summary-row">
+            <span>Items ({getTotalItems()}):</span>
+            <span>${getTotalPrice().toFixed(2)}</span>
           </div>
-        ))}
-      </div>
-      
-      <div className="cart-summary">
-        <button onClick={clearCart} className="clear-cart-btn">Clear Cart</button>
-        
-        <div className="cart-totals">
-          <div className="subtotal">
-            <span>Subtotal:</span>
-            <span>${getTotal().toFixed(2)}</span>
-          </div>
-          <div className="shipping">
+          <div className="summary-row">
             <span>Shipping:</span>
-            <span>Free</span>
+            <span>Calculated at checkout</span>
           </div>
-          <div className="total">
+          <div className="summary-row total">
             <span>Total:</span>
-            <span>${getTotal().toFixed(2)}</span>
+            <span>${getTotalPrice().toFixed(2)}</span>
           </div>
-          
-          <button 
-            onClick={handleCheckout} 
-            className="checkout-btn"
+          <button
+            className="checkout-button"
+            onClick={handleCheckout}
           >
             Proceed to Checkout
           </button>
+          <button
+            className="clear-cart"
+            onClick={() => {
+              clearCart();
+              toast.success('Cart cleared');
+            }}
+          >
+            Clear Cart
+          </button>
         </div>
       </div>
-  </div>
-);
+    </div>
+  );
 };
 
 export default Cart; 
