@@ -2,8 +2,6 @@ package com.collectiverse.config;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import io.github.bucket4j.Bucket4j;
-import io.github.bucket4j.Refill;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +20,7 @@ public class RateLimitConfig {
     public Bucket createNewBucket() {
         // Allow 10 requests per minute
         Bandwidth limit = Bandwidth.simple(10, Duration.ofMinutes(1));
-        return Bucket4j.builder()
+        return Bucket.builder()
                 .addLimit(limit)
                 .build();
     }

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -21,7 +22,8 @@ public class RateLimitInterceptor implements HandlerInterceptor {
     private RateLimitConfig rateLimitConfig;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull Object handler)
             throws Exception {
         String ip = request.getRemoteAddr();
         Bucket bucket = buckets.computeIfAbsent(ip, k -> rateLimitConfig.createNewBucket());
