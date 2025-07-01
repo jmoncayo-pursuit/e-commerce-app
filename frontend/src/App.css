@@ -108,14 +108,14 @@ nav a:hover {
 }
 
 .footer-collapsed .footer-toggle {
-  visibility: visible !important;
-  opacity: 1 !important;
+  visibility: visible;
+  opacity: 1;
   background-color: var(--secondary-color);
 }
 
 .footer-collapsed .toggle-icon {
-  visibility: visible !important;
-  opacity: 1 !important;
+  visibility: visible;
+  opacity: 1;
   color: white;
 }
 

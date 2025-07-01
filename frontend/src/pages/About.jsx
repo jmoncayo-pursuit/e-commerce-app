@@ -4,6 +4,34 @@ import './About.css';
 const About = () => {
   return (
     <div className="about-container">
+      <div className="about-hero" style={{
+        backgroundImage: 'url(/images/collectiversebackdrop.jpeg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '400px',
+        width: '100%',
+        position: 'relative',
+        marginBottom: '2rem'
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <h1 style={{
+            color: 'white',
+            fontSize: '3rem',
+            textAlign: 'center',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'
+          }}>About Collectiverse</h1>
+        </div>
+      </div>
       <div className="about-content">
         <h1 className="about-title">About Collectiverse</h1>
         <p className="about-description">

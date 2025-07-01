@@ -1,52 +1,97 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../stores/authStore';
 import './Orders.css';
 
 const Orders = () => {
-  // Mock orders data
-  const orders = [
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Mock orders data (in a real app, this would come from an API)
+  const mockOrders = [
     {
-      id: '1',
-      date: '2024-03-15',
-      total: 1800,
+      id: '1001',
+      date: '2023-09-15',
+      total: 129.99,
       status: 'Delivered',
       items: [
-        {
-          id: '1',
-          name: 'Deadpool #1 (1997)',
-          price: 1800,
-          quantity: 1,
-          image: 'https://images.unsplash.com/photo-1612036782180-6f44e830872e?w=800&auto=format&fit=crop&q=60'
-        }
+        { id: 1, name: 'Vintage Comic Book', price: 89.99, quantity: 1 },
+        { id: 2, name: 'Collectible Action Figure', price: 40.00, quantity: 1 }
       ]
     },
     {
-      id: '2',
-      date: '2024-03-10',
-      total: 2400,
-      status: 'Shipped',
+      id: '1002',
+      date: '2023-10-05',
+      total: 75.50,
+      status: 'Processing',
       items: [
-        {
-          id: '2',
-          name: 'Batman: The Dark Knight Returns',
-          price: 1200,
-          quantity: 2,
-          image: 'https://images.unsplash.com/photo-1612036782180-6f44e830872e?w=800&auto=format&fit=crop&q=60'
-        }
+        { id: 3, name: 'Limited Edition Poster', price: 25.50, quantity: 1 },
+        { id: 4, name: 'Trading Card Set', price: 50.00, quantity: 1 }
       ]
     }
   ];
+  
+  useEffect(() => {
+    // Redirect if not authenticated
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: '/orders', message: 'Please log in to view your orders' } });
+      return;
+    }
+    
+    // Simulate API call with setTimeout
+    const fetchOrders = async () => {
+      setLoading(true);
+      try {
+        // In a real app, this would be an API call
+        setTimeout(() => {
+          setOrders(mockOrders);
+          setLoading(false);
+        }, 1000);
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        setLoading(false);
+      }
+    };
+    
+    fetchOrders();
+  }, [isAuthenticated, navigate]);
+  
+  // Show success message if redirected from checkout
+  const [message, setMessage] = useState(location.state?.message || '');
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+  
+  if (loading) {
+    return (
+      <div className="orders-loading">
+        <div className="loading-spinner"></div>
+        <p>Loading your orders...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="orders-container">
-      <h1>My Orders</h1>
+      <h1>Your Orders</h1>
+      
+      {message && (
+        <div className="order-success-message">
+          <p>{message}</p>
+        </div>
+      )}
       
       {orders.length === 0 ? (
         <div className="no-orders">
           <p>You haven't placed any orders yet.</p>
-          <Link to="/products" className="browse-button">
-            Browse Products
-          </Link>
         </div>
       ) : (
         <div className="orders-list">
@@ -67,12 +112,11 @@ const Orders = () => {
               <div className="order-items">
                 {order.items.map(item => (
                   <div key={item.id} className="order-item">
-                    <img src={item.image} alt={item.name} className="item-image" />
                     <div className="item-details">
-                      <h4>{item.name}</h4>
-                      <p className="item-price">${item.price.toFixed(2)}</p>
-                      <p className="item-quantity">Quantity: {item.quantity}</p>
+                      <p className="item-name">{item.name}</p>
+                      <p className="item-quantity">Qty: {item.quantity}</p>
                     </div>
+                    <p className="item-price">${item.price.toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -82,9 +126,7 @@ const Orders = () => {
                   <span>Total:</span>
                   <span className="total-amount">${order.total.toFixed(2)}</span>
                 </div>
-                <button className="track-order-button">
-                  Track Order
-                </button>
+                <button className="view-details-btn">View Details</button>
               </div>
             </div>
           ))}
