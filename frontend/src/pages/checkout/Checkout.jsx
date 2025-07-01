@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../../stores/cartStore';
 import { useAuthStore } from '../../stores/authStore';
+import confetti from 'canvas-confetti';
 import './Checkout.css';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
-  const { items, getTotal, clearCart } = useCartStore();
+  const { items, getTotalPrice, clearCart } = useCartStore();
   
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
@@ -82,10 +83,17 @@ const Checkout = () => {
     
     if (validateForm()) {
       // In a real app, you would send the order to your backend here
-      console.log('Order submitted:', { customer: formData, items, total: getTotal() });
+      console.log('Order submitted:', { customer: formData, items, total: getTotalPrice() });
       
       // Simulate successful order placement
       setOrderPlaced(true);
+      
+      // Trigger confetti effect
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
       
       // Clear the cart
       setTimeout(() => {
@@ -287,7 +295,7 @@ const Checkout = () => {
           <div className="summary-totals">
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>${getTotal().toFixed(2)}</span>
+              <span>${getTotalPrice().toFixed(2)}</span>
             </div>
             <div className="summary-row">
               <span>Shipping</span>
@@ -295,11 +303,11 @@ const Checkout = () => {
             </div>
             <div className="summary-row">
               <span>Tax</span>
-              <span>${(getTotal() * 0.08).toFixed(2)}</span>
+              <span>${(getTotalPrice() * 0.08).toFixed(2)}</span>
             </div>
             <div className="summary-row total">
               <span>Total</span>
-              <span>${(getTotal() * 1.08).toFixed(2)}</span>
+              <span>${(getTotalPrice() * 1.08).toFixed(2)}</span>
             </div>
           </div>
         </div>

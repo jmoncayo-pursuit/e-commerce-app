@@ -35,8 +35,9 @@ export const useCartStore = create(
       removeItem: async (productId) => {
         set({ loading: true, error: null });
         try {
-          const response = await cartService.removeItem(productId);
-          set({ items: response.data.items, loading: false });
+          await cartService.removeItem(productId);
+          await get().fetchCart();
+          set({ loading: false });
           toast.success('Item removed from cart');
         } catch (err) {
           set({ error: err.message, loading: false });

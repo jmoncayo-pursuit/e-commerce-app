@@ -90,6 +90,8 @@ public class CartServiceImpl implements CartService {
     public CartResponseDTO removeItem(Long userId, Long productId) {
         Cart cart = getOrCreateCart(userId);
         cartItemRepository.deleteByCartIdAndProductId(cart.getId(), productId);
+        // Force refresh from DB
+        cart = cartRepository.findById(cart.getId()).orElseThrow();
         return mapToCartResponseDTO(cart);
     }
 

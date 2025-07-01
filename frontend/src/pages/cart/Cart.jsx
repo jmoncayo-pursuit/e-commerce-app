@@ -135,7 +135,7 @@ const Cart = () => {
                     'FREE!'
                   )}
                 </div>
-                {!hasOnlyGiftBag && (
+                {!hasOnlyGiftBag && typeof (item.productId || item.product?.id) === 'number' && (
                   <button
                     className="remove-button"
                     onClick={() => removeItem(item.productId || item.product?.id)}

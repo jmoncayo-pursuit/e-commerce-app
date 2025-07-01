@@ -86,14 +86,14 @@
   margin-left: 1.5rem;
 }
 
-.item-name {
+.item-details h3.item-name {
   font-size: 1.25rem;
   font-weight: 500;
   color: #ffffff;
 }
 
-.item-price {
-  color: #a0a0a0;
+.cart-item .item-details .item-price {
+  color: #ffffff;
 }
 
 .item-quantity {
@@ -168,11 +168,11 @@
 }
 
 .summary-label {
-  color: #a0a0a0;
+  color: #ffffff;
 }
 
 .summary-value {
-  color: #ffffff;
+  color: #e0e0e0;
 }
 
 .checkout-button {
@@ -229,6 +229,10 @@
   color: #f44336;
   background: #ffebee;
   border-radius: 8px;
+}
+
+.item-condition {
+  color: #ffffff;
 }
 
 @media (max-width: 768px) {
