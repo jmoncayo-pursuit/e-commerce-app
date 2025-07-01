@@ -18,7 +18,7 @@ const Navbar = () => {
     logout: state.logout
   }));
   
-  const cartItemCount = useCartStore(state => state.getItemCount());
+  const cartItemCount = useCartStore(state => state.getTotalItems());
 
   const handleLogout = () => {
     logout();

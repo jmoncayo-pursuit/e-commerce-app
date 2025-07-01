@@ -1,132 +1,187 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCartStore } from '../../stores/cartStore';
 import { useAuthStore } from '../../stores/authStore';
+import toast from 'react-hot-toast';
 import './Cart.css';
+import { Link } from 'react-router-dom';
 
 const Cart = () => {
-  const { items, removeItem, updateQuantity, clearCart, getTotal } = useCartStore();
-  const { isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
+  const {
+    items,
+    loading,
+    error,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    getTotalItems,
+    getTotalPrice,
+    fetchCart
+  } = useCartStore();
 
-  const handleUpdateQuantity = (id, newQuantity) => {
-    if (newQuantity < 1) return;
-    updateQuantity(id, newQuantity);
-  };
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCart();
+    }
+  }, [isAuthenticated]);
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: '/cart', message: 'Please log in to checkout' } });
+      toast.error('Please log in to checkout');
+      navigate('/login');
       return;
     }
     navigate('/checkout');
   };
 
-  if (items.length === 0) {
+  if (loading) {
     return (
-      <div className="empty-cart">
-        <h2>Your Cart is Empty</h2>
-        <p>Looks like you haven't added any items to your cart yet.</p>
-        <Link to="/products" className="shop-button">Browse Products</Link>
+      <div className="cart-container">
+        <div className="loading">Loading cart...</div>
       </div>
     );
   }
 
+  if (error) {
+    return (
+      <div className="cart-container">
+        <div className="error">{error}</div>
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="cart-container">
+        <div className="empty-cart">
+          <h2>Your cart is empty</h2>
+          <p>Add some collectibles to your cart to see them here!</p>
+          <Link to="/products" className="continue-shopping">
+            Continue Shopping
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if cart only has free gift bag
+  const hasOnlyGiftBag = items.length === 1 && (
+    items[0].productId === 7 || // New structure
+    (items[0].product && items[0].product.id === 'free-gift-bag') // Old structure
+  );
+
   return (
-  <div className="cart-container">
-      <h1>Your Shopping Cart</h1>
-      
-      <div className="cart-items">
-        <div className="cart-header">
-          <span className="product-col">Product</span>
-          <span className="price-col">Price</span>
-          <span className="quantity-col">Quantity</span>
-          <span className="total-col">Total</span>
-          <span className="action-col">Action</span>
+    <div className="cart-container">
+      <div className="cart-header">
+        <h1 className="cart-title">Shopping Cart</h1>
+      </div>
+
+      {loading ? (
+        <div className="loading">Loading cart...</div>
+      ) : error ? (
+        <div className="error">{error}</div>
+      ) : items.length === 0 ? (
+        <div className="cart-empty">
+          <h2>Your cart is empty</h2>
+          <p>Looks like you haven't added any items to your cart yet.</p>
+          <Link to="/products" className="continue-shopping">
+            Continue Shopping
+          </Link>
         </div>
-        
-        {items.map(item => (
-          <div key={item.id} className="cart-item">
-            <div className="product-col">
-              <img 
-                src={item.image || 'https://via.placeholder.com/80'} 
-                alt={item.name} 
-                className="item-image"
-              />
-              <div className="item-details">
-                <h3>{item.name}</h3>
-                <p className="item-category">{item.category}</p>
-              </div>
-            </div>
-            
-            <div className="price-col">${item.price.toFixed(2)}</div>
-            
-            <div className="quantity-col">
-              <div className="quantity-control">
-                <button 
-                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                  className="quantity-btn"
-                >
-                  -
-                </button>
-                <input
-                  type="number"
-                  min="1"
-                  value={item.quantity}
-                  onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value) || 1)}
-                  className="quantity-input"
+      ) : (
+        <>
+          <div className="cart-items">
+            {items.map((item) => (
+              <div key={item.id} className="cart-item">
+                <img
+                  src={item.productImage || item.imageUrl || item.product?.imageUrl || '/placeholder-image.jpg'}
+                  alt={item.productName || item.name || item.product?.name || 'Product'}
+                  className="item-image"
                 />
-                <button 
-                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                  className="quantity-btn"
-                >
-                  +
-                </button>
+                <div className="item-details">
+                  <h3 className="item-name">{item.productName || item.name || item.product?.name}</h3>
+                  {item.price > 0 && (
+                    <span className="item-price">${item.price.toFixed(2)}</span>
+                  )}
+                  {item.price === 0 && (
+                    <span className="item-price free">FREE!</span>
+                  )}
+                  <p className="item-condition">Condition: {item.condition || item.product?.condition || 'New'}</p>
+                  {!hasOnlyGiftBag && (
+                    <div className="item-quantity">
+                      <button
+                        className="quantity-button"
+                        onClick={() => updateQuantity(item.productId || item.product?.id, item.quantity - 1)}
+                        disabled={item.quantity <= 1}
+                      >
+                        -
+                      </button>
+                      <span className="quantity-input">{item.quantity}</span>
+                      <button
+                        className="quantity-button"
+                        onClick={() => updateQuantity(item.productId || item.product?.id, item.quantity + 1)}
+                      >
+                        +
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className="item-total">
+                  {item.price > 0 ? (
+                    `$${(item.price * item.quantity).toFixed(2)}`
+                  ) : (
+                    'FREE!'
+                  )}
+                </div>
+                {!hasOnlyGiftBag && typeof (item.productId || item.product?.id) === 'number' && (
+                  <button
+                    className="remove-button"
+                    onClick={() => removeItem(item.productId || item.product?.id)}
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
+            ))}
+          </div>
+
+          <div className="cart-summary">
+            <h2>Order Summary</h2>
+            <div className="summary-row">
+              <span className="summary-label">Items ({getTotalItems()}):</span>
+              <span className="summary-value">${getTotalPrice().toFixed(2)}</span>
             </div>
-            
-            <div className="total-col">${(item.price * item.quantity).toFixed(2)}</div>
-            
-            <div className="action-col">
-              <button 
-                onClick={() => removeItem(item.id)}
-                className="remove-btn"
-                aria-label="Remove item"
+            <div className="summary-row">
+              <span className="summary-label">Shipping:</span>
+              <span className="summary-value">Calculated at checkout</span>
+            </div>
+            <div className="summary-row">
+              <span className="summary-label">Total:</span>
+              <span className="summary-value">${getTotalPrice().toFixed(2)}</span>
+            </div>
+            <button
+              className="checkout-button"
+              onClick={handleCheckout}
+              disabled={loading || hasOnlyGiftBag}
+            >
+              {hasOnlyGiftBag ? 'Free Gift Only' : 'Proceed to Checkout'}
+            </button>
+            {!hasOnlyGiftBag && (
+              <button
+                className="clear-cart"
+                onClick={clearCart}
+                disabled={loading}
               >
-                ✕
+                Clear Cart
               </button>
-            </div>
+            )}
           </div>
-        ))}
-      </div>
-      
-      <div className="cart-summary">
-        <button onClick={clearCart} className="clear-cart-btn">Clear Cart</button>
-        
-        <div className="cart-totals">
-          <div className="subtotal">
-            <span>Subtotal:</span>
-            <span>${getTotal().toFixed(2)}</span>
-          </div>
-          <div className="shipping">
-            <span>Shipping:</span>
-            <span>Free</span>
-          </div>
-          <div className="total">
-            <span>Total:</span>
-            <span>${getTotal().toFixed(2)}</span>
-          </div>
-          
-          <button 
-            onClick={handleCheckout} 
-            className="checkout-btn"
-          >
-            Proceed to Checkout
-          </button>
-        </div>
-      </div>
-  </div>
-);
+        </>
+      )}
+    </div>
+  );
 };
 
 export default Cart; 

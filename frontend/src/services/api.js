@@ -54,4 +54,16 @@ export const authService = {
   getCurrentUser: () => api.get('/auth/me'),
 };
 
+export const cartService = {
+  getCart: () => api.get('/cart'),
+  addItem: (data) => api.post('/cart/add', data),
+  updateItem: (data) => api.put('/cart/update', data),
+  removeItem: (productId) => api.delete(`/cart/remove/${productId}`),
+  clearCart: () => api.delete('/cart/clear'),
+  addFreeGiftBag: () => api.post('/cart/add', {
+    productId: 'free-gift-bag',
+    quantity: 1
+  })
+};
+
 export default api; 

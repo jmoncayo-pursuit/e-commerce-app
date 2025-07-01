@@ -1,61 +1,111 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { cartService } from '../services/api';
+import { useAuthStore } from './authStore';
+import { toast } from 'react-hot-toast';
 
 export const useCartStore = create(
   persist(
     (set, get) => ({
       items: [],
-      
-      addItem: (product, quantity = 1) => {
-        const { items } = get();
-        const existingItem = items.find(item => item.id === product.id);
+      loading: false,
+      error: null,
 
-        if (existingItem) {
-          // If item exists, update quantity
-          set({
-            items: items.map(item =>
-              item.id === product.id
-                ? { ...item, quantity: item.quantity + quantity } 
-                : item
-            )
+      addItem: async (product, quantity = 1) => {
+        const { isAuthenticated } = useAuthStore.getState();
+        if (!isAuthenticated) {
+          toast.error('Please log in to add items to cart');
+          return;
+        }
+
+        set({ loading: true, error: null });
+        try {
+          const response = await cartService.addItem({
+            productId: product.id,
+            quantity
           });
-        } else {
-          // If item doesn't exist, add it
-          set({ items: [...items, { ...product, quantity }] });
+          set({ items: response.data.items, loading: false });
+          toast.success('Added to cart!');
+        } catch (err) {
+          set({ error: err.message, loading: false });
+          toast.error('Failed to add item to cart');
         }
       },
 
-      removeItem: (productId) => {
-        const { items } = get();
-        set({ items: items.filter(item => item.id !== productId) });
+      removeItem: async (productId) => {
+        set({ loading: true, error: null });
+        try {
+          await cartService.removeItem(productId);
+          await get().fetchCart();
+          set({ loading: false });
+          toast.success('Item removed from cart');
+        } catch (err) {
+          set({ error: err.message, loading: false });
+          toast.error('Failed to remove item from cart');
+        }
       },
 
-      updateQuantity: (productId, quantity) => {
-        const { items } = get();
-        if (quantity <= 0) {
-          return get().removeItem(productId);
+      updateQuantity: async (productId, quantity) => {
+        if (quantity < 1) return;
+        set({ loading: true, error: null });
+        try {
+          const response = await cartService.updateItem({
+            productId,
+            quantity
+          });
+          set({ items: response.data.items, loading: false });
+        } catch (err) {
+          set({ error: err.message, loading: false });
+          toast.error('Failed to update quantity');
         }
-        
-          set({
-            items: items.map(item =>
-            item.id === productId ? { ...item, quantity } : item
-          )
-        });
       },
       
-      clearCart: () => set({ items: [] }),
+      clearCart: async () => {
+        set({ loading: true, error: null });
+        try {
+          await cartService.clearCart();
+          await cartService.addFreeGiftBag();
+          set({ items: [{
+            id: 'free-gift-bag',
+            productId: 'free-gift-bag',
+            name: 'Free Mystery Collectible Gift Bag',
+            price: 0,
+            condition: 'New',
+            imageUrl: '/gift-bag.jpg',
+            quantity: 1
+          }], loading: false });
+          toast.success('Cart updated with free gift bag!');
+        } catch (err) {
+          set({ error: err.message, loading: false });
+          toast.error('Failed to update cart');
+        }
+      },
       
-      getItemCount: () => {
+      getTotalItems: () => {
         const { items } = get();
         return items.reduce((total, item) => total + item.quantity, 0);
       },
       
-      getTotal: () => {
+      getTotalPrice: () => {
         const { items } = get();
         return items.reduce(
-          (total, item) => total + item.price * item.quantity, 
+          (total, item) => total + (item.price || item.product?.price || 0) * item.quantity, 
           0
         );
+      },
+
+      fetchCart: async () => {
+        const { isAuthenticated } = useAuthStore.getState();
+        if (!isAuthenticated) return;
+
+        set({ loading: true, error: null });
+        try {
+          const response = await cartService.getCart();
+          set({ items: response.data.items, loading: false });
+        } catch (err) {
+          set({ error: err.message, loading: false });
+          toast.error('Failed to fetch cart');
+        }
       }
     }),
     {
