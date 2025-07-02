@@ -5,7 +5,7 @@ import com.collectiverse.dto.LoginRequest;
 import com.collectiverse.dto.RegisterRequest;
 import com.collectiverse.dto.AuthResponse;
 import com.collectiverse.repository.UserRepository;
-import com.collectiverse.security.JwtTokenProvider;
+import com.collectiverse.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,7 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest request) {
@@ -46,7 +46,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        String token = jwtTokenProvider.generateToken(user);
+        String token = jwtService.generateToken(user);
         return new AuthResponse(token, user.getUsername(), user.getEmail());
     }
 
@@ -57,7 +57,7 @@ public class UserService {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = (User) authentication.getPrincipal();
-            String token = jwtTokenProvider.generateToken(user);
+            String token = jwtService.generateToken(user);
 
             return new AuthResponse(token, user.getUsername(), user.getEmail());
         } catch (BadCredentialsException e) {

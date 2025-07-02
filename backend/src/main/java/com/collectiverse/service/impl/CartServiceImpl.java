@@ -3,7 +3,6 @@ package com.collectiverse.service.impl;
 import com.collectiverse.dto.CartItemDTO;
 import com.collectiverse.dto.CartItemResponseDTO;
 import com.collectiverse.dto.CartResponseDTO;
-import com.collectiverse.dto.ProductResponseDTO;
 import com.collectiverse.exception.ResourceNotFoundException;
 import com.collectiverse.model.Cart;
 import com.collectiverse.model.CartItem;

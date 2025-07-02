@@ -5,6 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Entity
+@Table(name = "order_items")
 @Data
 public class OrderItem {
     @Id
